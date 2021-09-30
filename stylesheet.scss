@@ -1,0 +1,321 @@
+$resetBase_baseBackground: #fff !default;
+$resetBase_baseColor: #000 !default;
+$resetBase_baseFontFamily: sans-serif !default;
+
+
+// -- reset --
+* {
+	box-sizing: border-box;
+}
+
+a,abbr,body,button,fieldset,form,h1,h2,h3,h4,h5,h6,iframe,img,label,legend,li,ol,p,td,th,ul {
+	border: 0;
+	font-size: 100%;
+	font-weight: normal;
+	list-style: none;
+	margin: 0;
+	outline: 0;
+	padding: 0;
+	text-decoration: none;
+	vertical-align: baseline;
+}
+
+a,abbr {
+	font-weight: inherit;
+}
+
+input,select,textarea {
+	font-size: 100%;
+	margin: 0;
+}
+
+// -- base --
+body,button,input,select,td,textarea,th {
+	color: $resetBase_baseColor;
+	font-family: $resetBase_baseFontFamily;
+}
+
+body {
+	background: $resetBase_baseBackground;
+	font-size: 62.5%;
+	line-height: 1;
+}
+
+// -- base - clear fix --
+%clearFix:before,
+%clearFix:after {
+	content: '\0020'; // space character
+	display: block;
+	height: 0;
+	overflow: hidden;
+}
+
+%clearFix:after {
+	clear: both;
+}
+
+// -- base - hide --
+%hide {
+	left: -999em;
+	overflow: hidden;
+	position: absolute;
+	top: -999em;
+	width: 1em;
+}
+
+// -- base - text overflow ellipsis --
+%textOverflowEllipsis {
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+// -- base - responsive image --
+%responsiveImage {
+	display: block;
+	height: auto;
+	max-width: 100%;
+}
+
+// -- base - touch device tap highlight remove --
+%tapHighlightRemove {
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+@mixin respondWidth($query) {
+	@media screen and #{$query} { @content; }
+}
+
+@mixin respondWidthFrom($key) {
+	@if (map-has-key($respondWidthMap,$key)) {
+		@media screen and
+			(min-width: map-get($respondWidthMap,$key) + 1) { @content; }
+	} @else {
+		@error 'Invalid $respondWidthMap \'from\' key: #{$key}';
+	}
+}
+
+@mixin respondWidthUpTo($key) {
+	@if (map-has-key($respondWidthMap,$key)) {
+		@media screen and
+			(max-width: map-get($respondWidthMap,$key)) { @content; }
+	} @else {
+		@error 'Invalid $respondWidthMap \'up to\' key: #{$key}';
+	}
+}
+
+@mixin respondWidthFromUpTo($keyFrom,$keyUpTo) {
+	@if (map-has-key($respondWidthMap,$keyFrom)) {
+		@if (map-has-key($respondWidthMap,$keyUpTo)) {
+			$widthFrom: map-get($respondWidthMap,$keyFrom);
+			$widthUpTo: map-get($respondWidthMap,$keyUpTo);
+
+			@if ($widthFrom < $widthUpTo) {
+				@media screen and
+					(min-width: $widthFrom + 1) and
+					(max-width: $widthUpTo) { @content; }
+			} @else {
+				@error '$respondWidthMap key \'from\' (#{$keyFrom}) must be lower than key \'up to\' (#{$keyUpTo})';
+			}
+		} @else {
+			@error 'Invalid $respondWidthMap \'up to\' key: #{$keyUpTo}';
+		}
+	} @else {
+		@error 'Invalid $respondWidthMap \'from\' key: #{$keyFrom}';
+	}
+}
+
+@function respondWidthGet($key,$shift: 0) {
+	@if (map-has-key($respondWidthMap,$key)) {
+		@return (map-get($respondWidthMap,$key) + $shift);
+	}
+
+	@error 'Invalid $respondWidthMap key: #{$key}';
+}
+
+@mixin retinaImage($src,$width: 100%) {
+    @media only screen and (-webkit-min-device-pixel-ratio: 2),
+        only screen and (min-resolution: 192dpi) {
+            background-image: url(#{$src});
+            backround-size: $width;
+        }
+}    
+
+@mixin retinaOnly() {
+    @media only screen and (-webkit-min-device-pixel-ratio: 2)
+        only screen and (min-resolution: 192dpi) { @content; }
+}
+
+$vendorLinerGradientLegacyAngleList: (
+	to bottom		: top,
+	to bottom left	: top right,
+	to bottom right	: top left,
+	to left			: right,
+	to right		: left,
+	to top			: bottom,
+	to top left		: bottom right,
+	to top right	: bottom left
+);
+
+
+@mixin backface-visibility($value) {
+    -webkit-backface-visibility: $value;
+    backface-visibility: $value;
+}
+
+@mixin linear-gradient($angle,$stops...) {
+	@if (map-has-key($vendorLinerGradientLegacyAngleList,$angle)) {
+		$angleLegacy: map-get($vendorLinerGradientLegacyAngleList,$angle);
+		background: -webkit-linear-gradient($angleLegacy,$stops);
+		background: linear-gradient($angle,$stops);
+	} @else {
+		@error 'Invalid $angle: #{$angle}';
+	}
+}
+
+@mixin transorm($value)
+    -ms-transform $value; //for IE9
+    -webkit-transform: $value;
+	transform: $value;
+}
+// --animation--
+@mixin animation($value) {
+    -webkit-animation: $value;
+    animation: $value;
+}
+
+@mixin animation-delay($value) {
+    -webkit-animation-delay: $value;
+    animation-delay: $value;
+}
+
+@mixin animation-direction($value) {
+    -webkit-animation-direction: $value;
+    animation-direction: $value;
+}
+
+@mixin animation-duration($value) {
+    -webkit-animation-duration: $value;
+    animation-duration: $value;
+}
+
+@mixin animation-fill-mode($value) {
+    -webkit-animation-fill-mode: $value;
+    animation-fill-mode: $value;
+}
+
+@mixin animation-iteration-count($value) {
+    -webkit-animation-iteration-count: $value;
+    animation-iteration-count: $value;
+}
+
+@mixin animation-name($value) {
+    -webkit-animation-name: $value;
+    animation-name: $value
+}
+
+@mixin animation-play-state($value) {
+    -webkit-animation-play-state: $value;
+    animation-play-state: $value
+}
+
+@mixin animation-timing-function($value) {
+    -webkit-animation-timing-function: $value;
+    animation-timing-function: $value;
+}
+
+// -- animation - keyframes --
+@mixin keyframes($name) {
+    @-webkit-keyframes #{$name} { @content; }
+    @keyframes #{$name} { @content; }
+}
+
+// -- transition --
+@mixin transition($value...) {
+    -webkit-transition: $value;
+    transition: $value;
+}
+
+@mixin transition-delay($value) {
+    -webkit-transition-delay: $value;
+    transition-delay: $value;
+}
+
+@mixin transition-duration($value) {
+    -webkit-transition-duration: $value;
+    transition-delay: $value;
+}
+
+@mixin transition-property($value...) {
+    -webkit-transition-duration: $value;
+    transition-delay: $value;
+}
+
+@mixin transition-timing-function($value) {
+    -webkit-transition-timing-function: $value;
+    transition-timing-function: $value;
+}
+
+@function color($key) {
+    @if (map-has-key($colorMap,$key)) {
+        @return  map-get($colorMap,$key);
+    }
+
+    @error 'Invalid $colorMap key: #{$key}';
+}
+
+@function fontSize($key: null) {
+    @if ($key == null) {
+        // default to first map key
+        $key: nth(map-keys($fontSizeMap),1);
+    }    
+
+    @if(map-has-key($fontSizeMap,key)) {
+       @return map-get($fontSizeMap,$key);
+    }   
+
+    @error 'Invalid $fontSizeMap key: #{$key}'
+}   
+
+@function sp($key: null,$multiplier: 1) {
+    @if ($key == null) {
+        // default to first map key
+        $key: nth(map-keys($spacingMap),1);
+    }
+
+    @if (map-has-key($spacingMap,$key)) {
+        @return(map-get($spacingMap,$key) * $multiplier);
+    }
+
+    @error 'Invalid $spacingMap key: #{key}'
+}
+
+@function zIndex($key: null,$shift: 0) {
+	@if ($key == null) {
+		// default to first map key
+		$key: nth(map-keys($zIndexMap),1);
+	}
+
+	@if (map-has-key($zIndexMap,$key)) {
+		@return (map-get($zIndexMap,$key) + $shift);
+	}
+
+	@error 'Invalid $zIndexMap key: #{$key}';
+}
+
+@mixin fontFace($family,$src,$style: normal,$weight: normal) {
+    @font-face {
+        font-family: $family;
+        scr: url('#{$scr}.eot'); // IE9 compat
+        src: url('#{$src}.eot?#iefix') format('embedded-opentype'), // IE8 and below
+			url('#{$src}.woff') format('woff'), // standards
+			url('#{$src}.ttf') format('truetype'), // Safari, Android, iOS
+			url('#{$src}.svg##{$family}') format('svg'); // legacy iOS
+
+        font-style: $style;
+        font-weight: $weight
+    }
+}
+
+
+
